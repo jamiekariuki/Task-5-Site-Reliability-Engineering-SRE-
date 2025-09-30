@@ -1,0 +1,121 @@
+# ---- Python / Django ----
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.mo
+*.egg-info/
+db.sqlite3
+
+# Virtual environment
+venv/
+.env
+*.env
+
+# Django specific
+/staticfiles/
+/media/
+
+
+# ---- IDE / OS ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- Coverage / Testing ----
+.coverage
+htmlcov/
+.pytest_cache/
+coverage.xml
+jest-coverage/
+
+# Byte-compiled / optimized / compiled files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+media/
+# Editor/IDE specific files
+.idea/  # PyCharm
+.vscode/  # VS Code
+*.sublime-project
+*.sublime-workspace
+
+# Django-specific files
+*.log
+*.pot
+db.sqlite3
+local_settings.py  # Or any other file containing local/sensitive settings
+media/  # User-uploaded files (if not served by a separate service)
+static/  # Collected static files (if collected during deployment)
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Test and coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables
+.env
+
+# Celery beat schedule file
+celerybeat-schedule
+
+########################################
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mydb",            
+        "USER": "admin",           
+        "PASSWORD": "secretpassword",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
+    }
+}
+
+
+postgress
+
+docker run -d \
+  --name my-postgres \
+  -e POSTGRES_DB=mydb \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=secretpassword \
+  -p 5432:5432 \
+  postgres:15
+
+
+django
+docker run -d \
+  --name my-django-app \
+  -e POSTGRES_DB=mydb \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=secretpassword \
+  -e POSTGRES_HOST=my-postgres \
+  -e POSTGRES_PORT=5432 \
+  -p 8000:8000 \
+  my-django-app
+
+docker build -t my-django-app .
+
+

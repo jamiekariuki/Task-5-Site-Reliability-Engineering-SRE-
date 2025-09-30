@@ -11,12 +11,13 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
+  console.log(userInfo);
 
-  console.log(userInfo)
+  const queryClient = useQueryClient();
 
-  const queryClient = useQueryClient()
-
-  const { register, handleSubmit, formState, reset, watch } = useForm({defaultValues: userInfo ? userInfo : {}});
+  const { register, handleSubmit, formState, reset, watch } = useForm({
+    defaultValues: userInfo ? userInfo : {},
+  });
   const { errors } = formState;
 
   const password = watch("password");
@@ -24,15 +25,17 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
   const updateProfileMutation = useMutation({
     mutationFn: (data) => updateProfile(data),
     onSuccess: () => {
-      toast.success("Profile updated successfully!")
-      toggleModal()
-      queryClient.invalidateQueries({queryKey: ["users", userInfo?.username]})
+      toast.success("Profile updated successfully!");
+      toggleModal();
+      queryClient.invalidateQueries({
+        queryKey: ["users", userInfo?.username],
+      });
     },
 
     onError: (err) => {
-      toast.error(err.message)
-    }
-  })
+      toast.error(err.message);
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: (data) => registerUser(data),
@@ -47,29 +50,24 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
   });
 
   function onSubmit(data) {
-    if(updateForm){
-      const formData = new FormData()
-      formData.append("username", data.username)
-      formData.append("first_name", data.first_name)
-      formData.append("last_name", data.last_name)
-      formData.append("job_title", data.job_title)
-      formData.append("bio", data.bio)
+    if (updateForm) {
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("first_name", data.first_name);
+      formData.append("last_name", data.last_name);
+      formData.append("job_title", data.job_title);
+      formData.append("bio", data.bio);
 
-      if(data.profile_picture && data.profile_picture[0]){
-        if(data.profile_picture[0] != "/"){
-          formData.append("profile_picture", data.profile_picture[0])
+      if (data.profile_picture && data.profile_picture[0]) {
+        if (data.profile_picture[0] != "/") {
+          formData.append("profile_picture", data.profile_picture[0]);
         }
       }
 
-      updateProfileMutation.mutate(formData)
-
-
+      updateProfileMutation.mutate(formData);
+    } else {
+      mutation.mutate(data);
     }
-
-    else{
-      mutation.mutate(data)
-    }
-    
   }
 
   return (
@@ -153,105 +151,112 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
         )}
       </div>
 
-        {updateForm && <div>
-        <Label htmlFor="job_title" className="dark:text-[97989F]">
-          Job Title
-        </Label>
-        <Input
-          type="text"
-          id="job_title"
-          placeholder="Enter Job Title"
-          {...register("job_title", {
-            required: "Your job title is required",
-            minLength: {
-              value: 3,
-              message: "Your job title must be at least 3 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.job_title?.message && (
-          <InputError error={errors.job_title.message} />
-        )}
-      </div>}
+      {updateForm && (
+        <div>
+          <Label htmlFor="job_title" className="dark:text-[97989F]">
+            Job Title
+          </Label>
+          <Input
+            type="text"
+            id="job_title"
+            placeholder="Enter Job Title"
+            {...register("job_title", {
+              required: "Your job title is required",
+              minLength: {
+                value: 3,
+                message: "Your job title must be at least 3 characters",
+              },
+            })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
+          />
+          {errors?.job_title?.message && (
+            <InputError error={errors.job_title.message} />
+          )}
+        </div>
+      )}
 
+      {updateForm && (
+        <div>
+          <Label htmlFor="content">Bio</Label>
+          <Textarea
+            id="content"
+            placeholder="Tell us more about you"
+            {...register("bio", {
+              required: "Your bio is required",
+              minLength: {
+                value: 10,
+                message: "The content must be at least 10 characters",
+              },
+            })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[300px] text-justify"
+          />
+          {errors?.bio?.message && <InputError error={errors.bio.message} />}
+        </div>
+      )}
 
-      {updateForm && <div>
-        <Label htmlFor="content">Bio</Label>
-        <Textarea
-          id="content"
-          placeholder="Tell us more about you"
-          {...register("bio", {
-            required: "Your bio is required",
-            minLength: {
-              value: 10,
-              message: "The content must be at least 10 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[300px] text-justify"
-        />
-        {errors?.bio?.message && (
-          <InputError error={errors.bio.message} />
-        )}
-      </div>}
+      {updateForm && (
+        <div className="w-full">
+          <Label htmlFor="profile_picture">Profile Picture</Label>
+          <Input
+            type="file"
+            id="picture"
+            {...register("profile_picture", {
+              required: false,
+            })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
+          />
 
-      {updateForm && <div className="w-full">
-        <Label htmlFor="profile_picture">Profile Picture</Label>
-        <Input
-          type="file"
-          id="picture"
-          {...register("profile_picture", {
-            required: false,
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
-        />
-
-        {/* {errors?.profile_picture?.message && (
+          {/* {errors?.profile_picture?.message && (
           <InputError error={errors.profile_picture.message} />
         )} */}
-      </div>}
+        </div>
+      )}
 
+      {updateForm || (
+        <div>
+          <Label htmlFor="password">Password</Label>
+          <Input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+            })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
+          />
+          {errors?.password?.message && (
+            <InputError error={errors.password.message} />
+          )}
+        </div>
+      )}
 
-      {updateForm || <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          placeholder="Enter password"
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.password?.message && (
-          <InputError error={errors.password.message} />
-        )}
-      </div>}
-
-     {updateForm ||  <div>
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <Input
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm password"
-          {...register("confirmPassword", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters",
-            },
-            validate: (value) => value === password || "Passwords do not match",
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.confirmPassword?.message && (
-          <InputError error={errors.confirmPassword.message} />
-        )}
-      </div>}
+      {updateForm || (
+        <div>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm password"
+            {...register("confirmPassword", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+              validate: (value) =>
+                value === password || "Passwords do not match",
+            })}
+            className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
+          />
+          {errors?.confirmPassword?.message && (
+            <InputError error={errors.confirmPassword.message} />
+          )}
+        </div>
+      )}
 
       <div className="w-full flex items-center justify-center flex-col my-4">
         {updateForm ? (
@@ -277,9 +282,14 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
             )}
           </button>
         )}
-       {updateForm || <p className="text-[14px]">
-          Already have an account? <Link to="/signin">Sign In</Link>
-        </p>}
+        {updateForm || (
+          <p className="text-[14px] pt-3">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-[#4B6BFB] pl-2">
+              Sign In
+            </Link>
+          </p>
+        )}
       </div>
     </form>
   );

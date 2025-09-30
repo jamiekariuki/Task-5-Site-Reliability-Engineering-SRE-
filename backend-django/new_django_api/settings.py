@@ -1,3 +1,5 @@
+import os
+
 """
 Django settings for new_django_api project.
 
@@ -79,12 +81,29 @@ WSGI_APPLICATION = 'new_django_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
+
+
+
+def get_env_var(name: str) -> str:
+    """Get an environment variable or raise an exception if not set."""
+    value = os.environ.get(name)
+    if value is None:
+        raise RuntimeError(f"Environment variable '{name}' not set")
+    return value
+
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': BASE_DIR / 'db.sqlite3',
-   }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": get_env_var("POSTGRES_DB"),
+        "USER": get_env_var("POSTGRES_USER"),
+        "PASSWORD": get_env_var("POSTGRES_PASSWORD"),
+        "HOST": get_env_var("POSTGRES_HOST"),
+        "PORT": get_env_var("POSTGRES_PORT"),
+    }
 }
+
 
 
 

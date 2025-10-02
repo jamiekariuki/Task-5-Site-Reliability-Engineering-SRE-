@@ -17,6 +17,9 @@ venv/
 .env
 *.env
 
+runtest
+runtest.txt
+
 # Django specific
 /staticfiles/
 /media/

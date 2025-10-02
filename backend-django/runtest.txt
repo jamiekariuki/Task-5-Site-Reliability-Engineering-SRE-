@@ -9,6 +9,7 @@ docker run -d \
   postgres:15
 
 
+backend
 🛠 Step 1. Choose a network
 
 By default, containers on the same custom Docker network can talk to each other using container names as hostnames.
@@ -44,3 +45,11 @@ Explanation:
 -e ... → matches exactly what your Django settings.py expects.
 
 -p 8000:8000 → exposes Django app on http://localhost:8000.
+
+frontend
+
+docker run -d \
+  --name frontend-app \
+  -e VITE_BASE_URL=http://localhost:8000 \
+  -p 3000:80 \
+  jamiekariuki/frontend:latest

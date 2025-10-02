@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode"
 //export const BASE_URL = import.meta.env.VITE_BASE_URL
 
 //testing
-export const BASE_URL= "http://localhost:8000"
+export const BASE_URL= "backend"
 
 const api = axios.create({
     baseURL: BASE_URL

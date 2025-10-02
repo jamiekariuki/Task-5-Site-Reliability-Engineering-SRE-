@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: backend-config
 data:
-  DB_HOST: postgres
-  DB_PORT: "5432"
-  DB_NAME: backenddb
+  POSTGRES_DB: backenddb
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"

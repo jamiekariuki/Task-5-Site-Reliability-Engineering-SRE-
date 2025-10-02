@@ -15,36 +15,22 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:14
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: backend-secrets
-              key: DB_USER
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: backend-secrets
-              key: DB_PASSWORD
-        - name: POSTGRES_DB
-          valueFrom:
-            configMapKeyRef:
-              name: backend-config
-              key: DB_NAME
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: trust
-        volumeMounts:
-        - name: postgres-storage
-          mountPath: /var/lib/postgresql/data
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: backend-config
+            - secretRef:
+                name: backend-secrets
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
       volumes:
-      - name: postgres-storage
-        emptyDir: {} # use PVC for production
+        - name: postgres-storage
+          emptyDir: {} # use PVC for production
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -53,6 +39,6 @@ spec:
   selector:
     app: postgres
   ports:
-  - port: 5432
-    targetPort: 5432
+    - port: 5432
+      targetPort: 5432
   type: ClusterIP

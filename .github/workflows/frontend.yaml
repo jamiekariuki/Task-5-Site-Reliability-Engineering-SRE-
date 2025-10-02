@@ -1,11 +1,11 @@
-name: backend CI
+name: frontend CI
 
 on:
   push:
     branches:
       - main
-    paths:
-      - "backend-django/**"
+#    paths:
+#      - "frontend-react/**"
 
 jobs:
   push:
@@ -27,7 +27,7 @@ jobs:
       - name: Build and Push action
         uses: docker/build-push-action@v6
         with:
-          context: ./backend-django
-          file: ./backend-django/Dockerfile
+          context: ./frontend-react
+          file: ./frontend-react/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/blog:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest

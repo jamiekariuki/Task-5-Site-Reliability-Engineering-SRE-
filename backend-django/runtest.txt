@@ -1,0 +1,46 @@
+postgress
+
+docker run -d \
+  --name my-postgres \
+  -e POSTGRES_DB=mydb \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=secretpassword \
+  -p 5432:5432 \
+  postgres:15
+
+
+🛠 Step 1. Choose a network
+
+By default, containers on the same custom Docker network can talk to each other using container names as hostnames.
+So let’s create one:
+
+docker network create blognet
+
+
+Then connect Postgres to it:
+
+docker network connect blognet my-postgres
+
+🛠 Step 2. Run Django with environment variables
+
+Now run your Django container on the same network and pass the required env vars:
+
+docker run -d \
+  --name blog-app \
+  --network blognet \
+  -e POSTGRES_DB=mydb \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=secretpassword \
+  -e POSTGRES_HOST=my-postgres \
+  -e POSTGRES_PORT=5432 \
+  -p 8000:8000 \
+  jamiekariuki/blog:latest
+
+
+Explanation:
+
+--network blognet → lets Django reach Postgres using my-postgres as host.
+
+-e ... → matches exactly what your Django settings.py expects.
+
+-p 8000:8000 → exposes Django app on http://localhost:8000.

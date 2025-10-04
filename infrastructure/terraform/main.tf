@@ -161,6 +161,7 @@ resource "helm_release" "argocd" {
   version          = "7.4.3"
   namespace        = "argocd"
   create_namespace = true
+  depends_on       = [module.eks]
 }
 
 

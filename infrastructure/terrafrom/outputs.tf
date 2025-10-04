@@ -1,6 +1,12 @@
-output "app_public_ip" {
-  description = "Public IP of the app EC2 instance"
-  value       = aws_eip.web_eip.public_ip
+output "frontend_repository_url" {
+  value = module.ecr-frontend.repository_url
 }
+
+output "backend_repository_url" {
+  value = module.ecr-backend.repository_url
+}
+
+
+
 
 

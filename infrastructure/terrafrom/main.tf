@@ -56,7 +56,7 @@ module "eks" {
   eks_managed_node_groups = {
     example = {
       # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
-      instance_types = ["m6i.large"]
+      instance_types = ["t3.micro"]
       ami_type       = "AL2023_x86_64_STANDARD"
 
       min_size = 2
@@ -79,8 +79,78 @@ module "eks" {
       ]
     }
   }
-
  
+}
+
+//frontend repository
+module "ecr-frontend" {
+  source = "terraform-aws-modules/ecr/aws"
+
+  repository_name = "frontend-${var.ENV_PREFIX}-repository"
+
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 30 images",
+        selection = {
+          tagStatus     = "tagged",
+          tagPrefixList = ["v"],
+          countType     = "imageCountMoreThan",
+          countNumber   = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Terraform   = "true"
+    Environment = var.ENV_PREFIX
+  }
+}
+
+//backend repository
+module "ecr-backend" {
+  source = "terraform-aws-modules/ecr/aws"
+
+  repository_name = "backend-${var.ENV_PREFIX}-repository"
+
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 30 images",
+        selection = {
+          tagStatus     = "tagged",
+          tagPrefixList = ["v"],
+          countType     = "imageCountMoreThan",
+          countNumber   = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Terraform   = "true"
+    Environment = var.ENV_PREFIX
+  }
+}
+
+# Built-in AWS managed policy for ECR pull
+data "aws_iam_policy" "ecr_readonly" {
+  arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+# Attach ECR read permissions to EKS node group role
+resource "aws_iam_role_policy_attachment" "eks_nodes_ecr" {
+  role       = module.eks.eks_managed_node_groups["example"].iam_role_name
+  policy_arn = data.aws_iam_policy.ecr_readonly.arn
 }
 
 

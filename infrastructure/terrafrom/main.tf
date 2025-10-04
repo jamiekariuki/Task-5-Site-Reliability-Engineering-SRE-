@@ -55,12 +55,11 @@ module "eks" {
 
   eks_managed_node_groups = {
     example = {
-      # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
       instance_types = ["t3.micro"]
       ami_type       = "AL2023_x86_64_STANDARD"
 
-      min_size = 2
-      max_size = 5
+      min_size = 1
+      max_size = 3
       desired_size = 2
 
       cloudinit_pre_nodeadm = [
@@ -152,6 +151,18 @@ resource "aws_iam_role_policy_attachment" "eks_nodes_ecr" {
   role       = module.eks.eks_managed_node_groups["example"].iam_role_name
   policy_arn = data.aws_iam_policy.ecr_readonly.arn
 }
+
+
+//argocd
+resource "helm_release" "argocd" {
+  name             = "argocd"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  version          = "7.4.3"
+  namespace        = "argocd"
+  create_namespace = true
+}
+
 
 
 

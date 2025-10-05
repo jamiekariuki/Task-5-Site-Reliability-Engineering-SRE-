@@ -178,9 +178,9 @@ prometheus:
     type: LoadBalancer  
 
 alertmanager:
-  enabled: true           
+  enabled: true
   service:
-    type: LoadBalancer 
+    type: LoadBalancer
   alertmanagerSpec:
     replicas: 1
   config:
@@ -191,9 +191,9 @@ alertmanager:
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 1h
-      receiver: "email-alert"
+      receiver: email-alert
     receivers:
-      - name: "email-alert"
+      - name: email-alert
         email_configs:
           - to: "jamiekariuki18@gmail.com"
             from: "jamiekariuki18@gmail.com"

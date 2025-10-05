@@ -35,7 +35,8 @@ runs:
       run: |
         echo "Key length: ${#AWS_SECRET_ACCESS_KEY}"
         echo -n "$AWS_SECRET_ACCESS_KEY" | od -c  
-        
+      shell: bash
+
       run: |
         echo "Downloading state for environment: ${{ inputs.environment }}"
         aws s3 cp "s3://${{ inputs.aws-account-id }}-app-dev/env:/${{ inputs.environment }}/networking/terraform.tfstate" terraform.tfstate

@@ -5,5 +5,5 @@ frontend:
     tag: "dev-frontend-v0.3.0"
 backend:
   image:
-    repository: jamiekariuki/crud-app
-    tag: "backend-16105052289"
+    repository: 850502433430.dkr.ecr.us-east-1.amazonaws.com/backend-dev-repository
+    tag: "dev-backend-v0.1.0"

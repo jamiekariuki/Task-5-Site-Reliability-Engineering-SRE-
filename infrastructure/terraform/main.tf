@@ -205,7 +205,7 @@ alertmanager:
               smarthost: "smtp.gmail.com:587"
               auth_username: "jamiekariuki18@gmail.com"
               auth_identity: "jamiekariuki18@gmail.com"
-              auth_password: "demopassword"
+              auth_password: a3puYiBya3JrIGVpaGwgeWV0bQo=
 EOF
   ]
 

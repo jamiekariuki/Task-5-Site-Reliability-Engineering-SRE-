@@ -23,6 +23,6 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ 
 fi
 
 # Collect static files (optional)
-# python manage.py collectstatic --noinput
+# python manage.py collectstatic --noinputtes
 
 exec "$@"

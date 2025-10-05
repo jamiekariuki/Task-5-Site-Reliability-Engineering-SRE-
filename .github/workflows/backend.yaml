@@ -1,4 +1,4 @@
-name: Frontend CI
+name: Backend CI
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
     #     - release/**
   #  paths:
-  #      - "frontend-react/**"
+  #      - "backend-django/**"
 
   workflow_run:
     workflows: ["Terraform"]
@@ -53,7 +53,7 @@ jobs:
         with:
           filters: |
             app:
-              - 'frontend-react/**'
+              - 'backend-django/**'
           base: ${{ github.event.before }}
 
   # Step 2: Download TF state from S3 and save outputs as artifact
@@ -102,7 +102,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
       - run: chmod +x ./.github/actions/scripts/bump-version.sh
       - id: bump
-        run: COMPONENT=frontend ./.github/actions/scripts/bump-version.sh
+        run: COMPONENT=backend ./.github/actions/scripts/bump-version.sh
 
   # Build and push Docker image to ECR
   push:
@@ -132,10 +132,10 @@ jobs:
 
       - name: Build, tag, and push image to ECR
         run: |
-          echo "ECR_REGISTRY=$FRONTEND_URL"
+          echo "ECR_REGISTRY=$BACKEND_URL"
           echo "VERSION=$VERSION"
-          docker build -t $FRONTEND_URL:$VERSION ./frontend-react
-          docker push $FRONTEND_URL:$VERSION
+          docker build -t $BACKEND_URL:$VERSION ./backend-django
+          docker push $BACKEND_URL:$VERSION
 
   # Create Git tag
   tag_release:
@@ -177,9 +177,9 @@ jobs:
           VERSION=${{ needs.versioning.outputs.new_version }}
           echo "Updating values.yaml with tag: $VERSION"
 
-          # Update frontend repo and tag
-          yq -i ".frontend.image.repository = \"${FRONTEND_URL}\"" ./helm/crud-app-chart/values.yaml
-          yq -i ".frontend.image.tag = \"${VERSION}\"" ./helm/crud-app-chart/values.yaml
+          # Update backend repo and tag
+          yq -i ".backend.image.repository = \"${BACKEND_URL}\"" ./helm/crud-app-chart/values.yaml
+          yq -i ".backend.image.tag = \"${VERSION}\"" ./helm/crud-app-chart/values.yaml
 
       - name: Commit and push updated values
         run: |

@@ -156,6 +156,9 @@ resource "aws_iam_role_policy_attachment" "eks_nodes_ecr" {
 }
 
 // prometheus testing
+###############################
+# 1️⃣ Install kube-prometheus-stack
+###############################
 resource "helm_release" "kube_prometheus_stack" {
   name             = "kube-prometheus"
   repository       = "https://prometheus-community.github.io/helm-charts"
@@ -183,32 +186,87 @@ alertmanager:
     type: LoadBalancer
   alertmanagerSpec:
     replicas: 1
-    config:
-      global:
-        resolve_timeout: 5m
-      route:
-        receiver: "email-alert"
-        group_by: ['alertname']
-        group_wait: 30s
-        group_interval: 5m
-        repeat_interval: 1h
-      receivers:
-        - name: "email-alert"
-          email_configs:
-            - to: "jamiekariuki18@gmail.com"
-              from: "jamiekariuki18@gmail.com"
-              smarthost: "smtp.gmail.com:587"
-              auth_username: "jamiekariuki18@gmail.com"
-              auth_identity: "jamiekariuki18@gmail.com"
-              auth_password: "<base64_encoded_password>"
-
-
-
 EOF
   ]
 
   depends_on = [module.eks]
 }
+
+###############################
+# 2️⃣ Create Kubernetes Secret for Gmail
+###############################
+resource "kubernetes_secret" "mail_pass" {
+  metadata {
+    name      = "mail-pass"
+    namespace = "monitoring"
+  }
+
+  type = "Opaque"
+
+  data = {
+    "gmail-pass" = "a3puYiBya3JrIGVpaGwgeWV0bQo="
+  }
+}
+
+###############################
+# 3️⃣ Create AlertmanagerConfig with proper routing
+###############################
+resource "kubernetes_manifest" "alertmanager_config" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1alpha1"
+    kind       = "AlertmanagerConfig"
+    metadata = {
+      name      = "email-alert-config"
+      namespace = "monitoring"
+      labels = {
+        release = "monitoring"
+      }
+    }
+    spec = {
+      route = {
+        receiver       = "send-email"
+        groupBy        = ["alertname"]
+        groupWait      = "30s"
+        groupInterval  = "5m"
+        repeatInterval = "1h"
+        routes = [
+          {
+            matchers = [
+              { name = "alertname", value = "TestEmail" }
+            ]
+            receiver = "send-email"
+          }
+        ]
+      }
+      receivers = [
+        {
+          name = "send-email"
+          emailConfigs = [
+            {
+              to           = "jamiekariuki18@gmail.com"
+              from         = "jamiekariuki18@gmail.com"
+              sendResolved = true
+              smarthost    = "smtp.gmail.com:587"
+              authUsername = "jamiekariuki18@gmail.com"
+              authIdentity = "jamiekariuki18@gmail.com"
+              authPassword = {
+                name = kubernetes_secret.mail_pass.metadata[0].name
+                key  = "gmail-pass"
+              }
+            }
+          ]
+        },
+        { name = "null" }
+      ]
+    }
+  }
+
+  depends_on = [
+    helm_release.kube_prometheus_stack,
+    kubernetes_secret.mail_pass
+  ]
+}
+
 
 
 

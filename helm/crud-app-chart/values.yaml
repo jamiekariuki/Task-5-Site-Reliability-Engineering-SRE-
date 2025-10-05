@@ -1,8 +1,8 @@
 replicaCount: 1
 frontend:
   image:
-    repository: jamiekariuki/crud-app
-    tag: "frontend-16105052287"
+    repository: 850502433430.dkr.ecr.us-east-1.amazonaws.com/frontend-dev-repository
+    tag: "dev-frontend-v0.2.1"
 backend:
   image:
     repository: jamiekariuki/crud-app

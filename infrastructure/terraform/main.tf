@@ -155,9 +155,7 @@ resource "aws_iam_role_policy_attachment" "eks_nodes_ecr" {
   policy_arn = data.aws_iam_policy.ecr_readonly.arn
 }
 
-
-
-// prometheus
+// prometheus testing
 resource "helm_release" "kube_prometheus_stack" {
   name             = "kube-prometheus"
   repository       = "https://prometheus-community.github.io/helm-charts"

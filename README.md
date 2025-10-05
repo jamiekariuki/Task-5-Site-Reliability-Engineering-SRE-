@@ -1,6 +1,6 @@
 # Task 4: CI/CD Pipeline with Cloud Integration (DevOps and Cloud Engineering)
 
-## 📌 Objective
+## Objective
 
 The goal of this project was to design and implement a **CI/CD pipeline** that:
 
@@ -13,7 +13,7 @@ This implementation leverages **GitHub Actions** for CI/CD automation and **Terr
 
 ---
 
-## 🚀 Pipeline Workflow
+## Pipeline Workflow
 
 The pipeline automates the following stages:
 

@@ -167,7 +167,7 @@ resource "helm_release" "argocd" {
   depends_on = [module.eks]
 }
 
-//prometheus
+// prometheus
 resource "helm_release" "kube_prometheus_stack" {
   name             = "kube-prometheus"
   repository       = "https://prometheus-community.github.io/helm-charts"
@@ -194,28 +194,30 @@ alertmanager:
   service:
     type: LoadBalancer 
   alertmanagerSpec:
-    replicas: 1   
+    replicas: 1
   config:
     global:
       resolve_timeout: 5m
     route:
+      group_by: ['alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
       receiver: "email-alert"
     receivers:
-    - name: "email-alert"
-      email_configs:
-      - to: "jamiekariuki18@gmail.com"
-        from: "jamiekariuki18@gmail.com"
-        smarthost: "smtp.gmail.com:587"
-        auth_username: "jamiekariuki18@gmail.com"
-        auth_identity: "jamiekariuki18@gmail.com"
-        auth_password: "demopassword"
+      - name: "email-alert"
+        email_configs:
+          - to: "jamiekariuki18@gmail.com"
+            from: "jamiekariuki18@gmail.com"
+            smarthost: "smtp.gmail.com:587"
+            auth_username: "jamiekariuki18@gmail.com"
+            auth_identity: "jamiekariuki18@gmail.com"
+            auth_password: "demopassword"
 EOF
   ]
 
   depends_on = [module.eks]
 }
-
-
 
 
 

@@ -192,7 +192,9 @@ prometheus:
 alertmanager:
   enabled: true           
   service:
-    type: LoadBalancer  
+    type: LoadBalancer 
+  alertmanagerSpec:
+    replicas: 1   
   config:
     global:
       resolve_timeout: 5m

@@ -1,9 +1,10 @@
-# Task 4: CI/CD Pipeline with Cloud Integration (DevOps and Cloud Engineering)
+# Task 4: CI/CD Pipeline with Cloud Integration (DevOps and Cloud Engineering: react, django and postgress)
 
 ## Objective
 
 The goal of this project was to design and implement a **CI/CD pipeline** that:
 
+- Deploys a 3 tier application (React, django and postgres db)
 - Builds and tags application containers.
 - Pushes container images to a **container registry** (AWS ECR).
 - Deploys the application to a **Kubernetes cluster (AWS EKS)**.

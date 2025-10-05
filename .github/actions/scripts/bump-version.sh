@@ -1,22 +1,24 @@
 #!/bin/bash
 set -e
 
-# Accept ENVIRONMENT as input (default to dev)
+# Accept ENVIRONMENT and COMPONENT (default to dev + frontend)
 ENVIRONMENT=${ENVIRONMENT:-dev}
+COMPONENT=${COMPONENT:-app}
 
 echo "Environment: $ENVIRONMENT"
+echo "Component: $COMPONENT"
 
 # 1. Fetch all tags
 git fetch --tags
 
-# 2. Get last tag for this environment only
-LAST_TAG=$(git tag --sort=-v:refname | grep "^${ENVIRONMENT}-v" | head -n1 || echo "")
+# 2. Get last tag for this env + component
+LAST_TAG=$(git tag --sort=-v:refname | grep "^${ENVIRONMENT}-${COMPONENT}-v" | head -n1 || echo "")
 
 if [ -z "$LAST_TAG" ]; then
-  echo "No previous $ENVIRONMENT tag found. Using all commits."
+  echo "No previous ${ENVIRONMENT}-${COMPONENT} tag found. Using all commits."
   COMMITS=$(git log HEAD --pretty=format:"%s")
 else
-  echo "Last $ENVIRONMENT tag: $LAST_TAG"
+  echo "Last ${ENVIRONMENT}-${COMPONENT} tag: $LAST_TAG"
   COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"%s")
 fi
 
@@ -35,14 +37,14 @@ else
 fi
 echo "Version bump: $BUMP"
 
-# 4. Determine last tag version numbers (strip env prefix)
+# 4. Determine last tag version numbers (strip env + component prefix)
 if [ -z "$LAST_TAG" ]; then
   MAJOR=0
   MINOR=0
   PATCH=0
 else
-  TAG_NO_ENV=${LAST_TAG#*-}   # remove "dev-", "stage-", "prod-"
-  IFS='.' read -r MAJOR MINOR PATCH <<< "${TAG_NO_ENV#v}"
+  TAG_NO_ENV_COMP=${LAST_TAG#*-${COMPONENT}-}   # remove "dev-frontend-", "dev-backend-"
+  IFS='.' read -r MAJOR MINOR PATCH <<< "${TAG_NO_ENV_COMP#v}"
 fi
 
 # 5. Increment version
@@ -52,8 +54,8 @@ case $BUMP in
   patch) PATCH=$((PATCH+1)) ;;
 esac
 
-# 6. Compose new tag with environment prefix
-NEW_TAG="${ENVIRONMENT}-v$MAJOR.$MINOR.$PATCH"
+# 6. Compose new tag with environment + component prefix
+NEW_TAG="${ENVIRONMENT}-${COMPONENT}-v$MAJOR.$MINOR.$PATCH"
 echo "New version: $NEW_TAG"
 
 # 7. Expose version to GitHub Actions

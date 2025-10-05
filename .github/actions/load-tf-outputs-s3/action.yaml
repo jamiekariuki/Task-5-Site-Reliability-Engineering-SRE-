@@ -25,18 +25,22 @@ runs:
       run: sudo apt-get update && sudo apt-get install -y jq
       shell: bash
 
-    - name: Download Terraform state
-      env:
-        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
-        AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
-
-    - name: Debug AWS credentials
+    - name: Debug AWS secret key
       run: |
         echo "Key length: ${#AWS_SECRET_ACCESS_KEY}"
-        echo -n "$AWS_SECRET_ACCESS_KEY" | od -c  
+        echo -n "$AWS_SECRET_ACCESS_KEY" | od -c
       shell: bash
+      env:
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Download Terraform state
       run: |
         echo "Downloading state for environment: ${{ inputs.environment }}"
         aws s3 cp "s3://${{ inputs.aws-account-id }}-app-dev/env:/${{ inputs.environment }}/networking/terraform.tfstate" terraform.tfstate

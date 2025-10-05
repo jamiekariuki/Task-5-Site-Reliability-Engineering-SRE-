@@ -182,7 +182,7 @@ alertmanager:
   service:
     type: LoadBalancer
   alertmanagerSpec:
-    replicas: 2
+    replicas: 1
     alertmanagerConfigSelector:
       matchLabels:
         release: monitoring

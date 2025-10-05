@@ -1,0 +1,18 @@
+name: Load TF Outputs
+description: Downloads Terraform outputs artifact and loads them into environment variables
+runs:
+  using: "composite"
+  steps:
+    - name: Download TF outputs artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: tf-outputs
+        path: ./tf-data
+
+    - name: Load TF outputs into env
+      shell: bash
+      run: |
+        FRONTEND_URL=$(jq -r .frontend_url ./tf-data/tf-outputs.json)
+        BACKEND_URL=$(jq -r .backend_url ./tf-data/tf-outputs.json)
+        echo "FRONTEND_URL=$FRONTEND_URL" >> $GITHUB_ENV
+        echo "BACKEND_URL=$BACKEND_URL" >> $GITHUB_ENV

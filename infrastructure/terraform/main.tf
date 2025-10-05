@@ -167,15 +167,15 @@ resource "helm_release" "kube_prometheus_stack" {
   values = [
     <<EOF
 grafana:
-  adminPassword: "mypassword"  
+  adminPassword: "mypassword"
   service:
-    type: LoadBalancer  
+    type: LoadBalancer
   ingress:
     enabled: false
 
 prometheus:
   service:
-    type: LoadBalancer  
+    type: LoadBalancer
 
 alertmanager:
   enabled: true
@@ -183,9 +183,10 @@ alertmanager:
     type: LoadBalancer
   alertmanagerSpec:
     replicas: 1
+    # Match label that exists on Alertmanager pods
     alertmanagerConfigSelector:
       matchLabels:
-        release: monitoring
+        app.kubernetes.io/name: alertmanager
     alertmanagerConfigMatcherStrategy:
       type: None
     config:
@@ -211,8 +212,6 @@ EOF
 
   depends_on = [module.eks]
 }
-
-
 
 
 

@@ -202,6 +202,7 @@ alertmanager:
             auth_identity: "jamiekariuki18@gmail.com"
             auth_password: a3puYiBya3JrIGVpaGwgeWV0bQo=
 
+
 EOF
   ]
 

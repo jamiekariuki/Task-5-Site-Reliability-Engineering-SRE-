@@ -190,6 +190,7 @@ prometheus:
     type: LoadBalancer  
 
 alertmanager:
+  enabled: true           
   service:
     type: LoadBalancer  
   config:
@@ -200,11 +201,11 @@ alertmanager:
     receivers:
     - name: "email-alert"
       email_configs:
-      - to: "jamiekariuki18@example.com"
-        from: "alerts@example.com"
+      - to: "jamiekariuki18@gmail.com"
+        from: "jamiekariuki18@gmail.com"
         smarthost: "smtp.gmail.com:587"
-        auth_username: "jamiekariuki18@example.com"
-        auth_identity: "jamiekariuki18@example.com"
+        auth_username: "jamiekariuki18@gmail.com"
+        auth_identity: "jamiekariuki18@gmail.com"
         auth_password: "demopassword"
 EOF
   ]

@@ -6,7 +6,7 @@ on:
       - main
     #     - release/**
   #  paths:
-  #      - "frontend_react/**"
+  #      - "frontend-react/**"
 
   workflow_run:
     workflows: ["Terraform"]
@@ -53,7 +53,7 @@ jobs:
         with:
           filters: |
             app:
-              - 'frontend_react/**'
+              - 'frontend-react/**'
           base: ${{ github.event.before }}
 
   # Step 2: Download TF state from S3 and save outputs as artifact
@@ -134,7 +134,7 @@ jobs:
         run: |
           echo "ECR_REGISTRY=$FRONTEND_URL"
           echo "VERSION=$VERSION"
-          docker build -t $FRONTEND_URL:$VERSION ./app
+          docker build -t $FRONTEND_URL:$VERSION ./frontend-react
           docker push $FRONTEND_URL:$VERSION
 
   # Create Git tag

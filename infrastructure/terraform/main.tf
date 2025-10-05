@@ -167,6 +167,51 @@ resource "helm_release" "argocd" {
   depends_on = [module.eks]
 }
 
+//prometheus
+resource "helm_release" "kube_prometheus_stack" {
+  name             = "kube-prometheus"
+  repository       = "https://prometheus-community.github.io/helm-charts"
+  chart            = "kube-prometheus-stack"
+  version          = "65.3.0"
+  namespace        = "monitoring"
+  create_namespace = true
+
+  values = [
+    <<EOF
+grafana:
+  adminPassword: "mypassword"  
+  service:
+    type: LoadBalancer  
+  ingress:
+    enabled: false
+
+prometheus:
+  service:
+    type: LoadBalancer  
+
+alertmanager:
+  service:
+    type: LoadBalancer  
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: "email-alert"
+    receivers:
+    - name: "email-alert"
+      email_configs:
+      - to: "jamiekariuki18@example.com"
+        from: "alerts@example.com"
+        smarthost: "smtp.gmail.com:587"
+        auth_username: "jamiekariuki18@example.com"
+        auth_identity: "jamiekariuki18@example.com"
+        auth_password: "demopassword"
+EOF
+  ]
+
+  depends_on = [module.eks]
+}
+
 
 
 

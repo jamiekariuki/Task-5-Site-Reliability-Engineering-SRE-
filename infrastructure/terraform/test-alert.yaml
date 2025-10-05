@@ -13,5 +13,5 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: "Test email alert from Kubernetes"
+            summary: "Test email alert from Kubernetes x"
             description: "This is a test alert to verify Alertmanager email configuration"

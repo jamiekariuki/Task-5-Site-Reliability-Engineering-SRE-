@@ -5,13 +5,13 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-    - name: test-email-group
+    - name: test
       rules:
-        - alert: TestEmailAlert
-          expr: vector(1) # Always fires
-          for: 1m
+        - alert: TestEmail
+          expr: vector(1)
+          for: 0m # <-- set to 0 to fire immediately
           labels:
             severity: critical
           annotations:
-            summary: "This is a test alert"
-            description: "Test alert to verify Alertmanager email delivery"
+            summary: "Test email alert"
+            description: "This alert is meant to verify email alerting"

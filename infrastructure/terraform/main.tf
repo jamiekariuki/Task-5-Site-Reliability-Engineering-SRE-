@@ -155,10 +155,7 @@ resource "aws_iam_role_policy_attachment" "eks_nodes_ecr" {
   policy_arn = data.aws_iam_policy.ecr_readonly.arn
 }
 
-// prometheus testing
-###############################
-# 1️⃣ Install kube-prometheus-stack
-###############################
+//prometheus
 resource "helm_release" "kube_prometheus_stack" {
   name             = "kube-prometheus"
   repository       = "https://prometheus-community.github.io/helm-charts"
@@ -191,82 +188,6 @@ EOF
 
   depends_on = [module.eks]
 }
-
-###############################
-# 2️⃣ Create Kubernetes Secret for Gmail
-###############################
-resource "kubernetes_secret" "mail_pass" {
-  metadata {
-    name      = "mail-pass"
-    namespace = "monitoring"
-  }
-
-  type = "Opaque"
-
-  data = {
-    "gmail-pass" = "a3puYiBya3JrIGVpaGwgeWV0bQo="
-  }
-}
-
-###############################
-# 3️⃣ Create AlertmanagerConfig with proper routing
-###############################
-resource "kubernetes_manifest" "alertmanager_config" {
-  manifest = {
-    apiVersion = "monitoring.coreos.com/v1alpha1"
-    kind       = "AlertmanagerConfig"
-    metadata = {
-      name      = "email-alert-config"
-      namespace = "monitoring"
-      labels = {
-        release = "monitoring"
-      }
-    }
-    spec = {
-      route = {
-        receiver       = "send-email"
-        groupBy        = ["alertname"]
-        groupWait      = "30s"
-        groupInterval  = "5m"
-        repeatInterval = "1h"
-        routes = [
-          {
-            matchers = [
-              { name = "alertname", value = "TestEmail" }
-            ]
-            receiver = "send-email"
-          }
-        ]
-      }
-      receivers = [
-        {
-          name = "send-email"
-          emailConfigs = [
-            {
-              to           = "jamiekariuki18@gmail.com"
-              from         = "jamiekariuki18@gmail.com"
-              sendResolved = true
-              smarthost    = "smtp.gmail.com:587"
-              authUsername = "jamiekariuki18@gmail.com"
-              authIdentity = "jamiekariuki18@gmail.com"
-              authPassword = {
-                name = kubernetes_secret.mail_pass.metadata[0].name
-                key  = "gmail-pass"
-              }
-            }
-          ]
-        },
-        { name = "null" }
-      ]
-    }
-  }
-
-  depends_on = [
-    helm_release.kube_prometheus_stack,
-    kubernetes_secret.mail_pass
-  ]
-}
-
 
 
 

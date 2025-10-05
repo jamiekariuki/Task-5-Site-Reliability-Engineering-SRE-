@@ -5,8 +5,8 @@ on:
     branches:
       - main
     #     - release/**
-  #  paths:
-  #      - "frontend-react/**"
+    paths:
+      - "frontend-react/**"
 
   workflow_run:
     workflows: ["Terraform"]

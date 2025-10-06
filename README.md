@@ -10,7 +10,7 @@ I installed the **Kube-Prometheus-Stack** using Terraform + Helm, which deploys 
 
   **Pods running**
   (`kubectl get pods -n monitoring` showing Prometheus, Grafana, Alertmanager running)
-  ![Application Running](pods.png)
+  ![Application Running](pod.png)
 
   **Services Running**
   (Screenshot of `kubectl get svc -n monitoring` showing LoadBalancer services for Prometheus, Grafana, and Alertmanager)
@@ -21,7 +21,7 @@ I installed the **Kube-Prometheus-Stack** using Terraform + Helm, which deploys 
 
 # Grafana
 
-![Application Running](grafan.png)
+![Application Running](grafana.png)
 
 ---
 

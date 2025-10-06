@@ -16,24 +16,24 @@ I installed the **Kube-Prometheus-Stack** using Terraform + Helm, which deploys 
   (Screenshot of `kubectl get svc -n monitoring` showing LoadBalancer services for Prometheus, Grafana, and Alertmanager)
   ![Application Running](svc.png)
 
-  **User Interfaces**
-  (Screenshots of Prometheus UI, Grafana dashboards, and Alertmanager UI)
+**User Interfaces**
+(Screenshots of Prometheus UI, Grafana dashboards, and Alertmanager UI)
 
-# Grafana
+Grafana
 
 ![Application Running](grafana.png)
 
 ---
 
-# prometheus
+prometheus
 
 ![Application Running](prom.png)
 
 ---
 
-# Alert manager
+Alert manager
 
-## ![Application Running](alert.png)
+![Application Running](alert.png)
 
 ## 2. Alert Configuration
 

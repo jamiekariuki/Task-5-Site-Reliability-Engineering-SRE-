@@ -9,7 +9,7 @@ spec:
       rules:
         - alert: TestEmail
           expr: vector(1)
-          for: 0m # <-- set to 0 to fire immediately
+          for: 0m
           labels:
             severity: critical
           annotations:

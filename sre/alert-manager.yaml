@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: main-rules-alert-config
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  route:
+    repeatInterval: 30m
+    receiver: "null"
+    routes:
+      - matchers:
+          - name: alertname
+            value: HighCpuUsage
+        receiver: "send-email"
+      - matchers:
+          - name: alertname
+            value: CrashLooping
+        receiver: "send-email"
+      - matchers:
+          - name: alertname
+            value: AppDown
+        receiver: "send-email"
+        repeatInterval: 5m
+
+  receivers:
+    - name: "send-email"
+      emailConfigs:
+        - to: jamiekariuki18@gmail.com
+          from: jamiekariuki18@gmail.com
+          sendResolved: false
+          smarthost: smtp.gmail.com:587
+          authUsername: jamiekariuki18@gmail.com
+          authIdentity: jamiekariuki18@gmail.com
+          authPassword:
+            name: mail-pass
+            key: gmail-pass
+    - name: "null"

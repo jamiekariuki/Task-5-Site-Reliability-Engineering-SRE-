@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: custom-alert-rules
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: custom.rules
+      rules:
+        - alert: HighCpuUsage
+          expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+          for: 10m
+          labels:
+            severity: warning
+            team: sre
+          annotations:
+            summary: "High CPU usage on {{ $labels.instance }}"
+            description: "CPU usage is above 80% for more than 10 minutes (current: {{ $value }}%)."
+
+        - alert: CrashLooping
+          expr: increase(kube_pod_container_status_restarts_total[10m]) > 3
+          for: 5m
+          labels:
+            severity: critical
+            team: sre
+          annotations:
+            summary: "Pod crash loop detected in namespace {{ $labels.namespace }}"
+            description: "Pod {{ $labels.pod }} has restarted more than 3 times in the last 10 minutes."
+
+        - alert: AppDown
+          expr: kube_endpoint_address_available{endpoint="your-service-name"} < 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Application down"
+            description: "No healthy endpoints available for service your-service-name"
